@@ -1,0 +1,44 @@
+/**
+ * Dragdealer JS v0.9.5
+ * http://code.ovidiu.ch/dragdealer-js
+ *
+ * Copyright (c) 2010, Ovidiu Chereches
+ * MIT License
+ * http://legal.ovidiu.ch/licenses/MIT
+ */
+
+.rounded-cornered,
+.rounded-cornered .handle {
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+.dragdealer {
+	position: relative;
+	height: 30px;
+	background: #EEE;
+}
+.dragdealer .handle {
+	position: absolute;
+	cursor: pointer;
+}
+.dragdealer .red-bar {
+	width: 100%;
+	height: 100%;
+	background: #CC0000;
+	color: #FFF;
+	line-height: 30px;
+	text-align: center;
+}
+.dragdealer .black-bar {
+	width: 100%;
+	height: 100%;
+	background: #000000;
+	color: #FFF;
+	line-height: 30px;
+	text-align: center;
+}
+.dragdealer .disabled {
+	background: #898989;
+}

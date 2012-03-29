@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0058)file:///home/leif/Dokumente/source/js_playground/test.html -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>e layout sandbox</title>
+
+        <script type="text/javascript" src="dragdealer.js"></script>
+        <link rel="stylesheet" type="text/css" href="style/dragdealer.css"></head>
+
+        <script type="text/javascript">
+
+			function align_x_input(x) {
+				var b = this.document.getElementById("box");
+				var e = this.document.getElementById("e1");
+				var bw = b.style.width.split("px")[0];
+				var ew = e.style.width.split("px")[0];
+				var nx = (x * bw) - (ew / 2);
+
+				if (nx > (bw - ew))
+					nx = bw - ew;
+				else if (nx < 0)
+					nx = 0;
+				e.style.marginLeft = String(nx) + 'px';
+			}
+
+			function align_y_input(y) {
+				var b = this.document.getElementById("box");
+				var e = this.document.getElementById("e1");
+				var bh = b.style.height.split("px")[0];
+				var eh = e.style.height.split("px")[0];
+				var ny = (y * bh) - (eh / 2);
+
+				if (ny > (bh - eh))
+					ny = bh - eh;
+				else if (ny < 0)
+					ny = 0;
+				e.style.marginTop = String(ny) + 'px';
+			}
+			
+			function align_x(x, y) {
+				var xi = document.getElementById('xalign');
+
+				align_x_input(x);
+				xi.value = x;
+			}
+			function align_y(x, y){
+				var yi = document.getElementById('yalign');
+
+				align_y_input(y);
+				yi.value = y;
+			}
+
+            window.onload = function()
+                {
+                    new Dragdealer('x-scroller',
+                            {
+                                horizontal: true,
+                                vertical: false,
+                                animationCallback: align_x
+                            });
+
+                    new Dragdealer('y-scroller',
+                            {
+                                horizontal: false,
+                                vertical: true,
+                                animationCallback: align_y
+                            });
+                }
+        </script>
+    <body>
+        <table>
+            <tbody>
+				<tr>
+					<td>
+						<div style="text-align:center">x-align</div>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div id="x-scroller" class="dragdealer rounded-cornered">
+							<div class="black-bar handle" style="width:30px"></div>
+						</div>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td id="box" style="width:500px;height:500px;vertical-align:top">
+					   <div id="e1" style="background:green;width:50px;height:50px">green</div>
+					   <!--<div id="box2" style="background:red;float:right">red</div>-->
+					</td>
+					<td style="width:30px;height:500px">
+						<div id="y-scroller" class="dragdealer rounded-cornered" style="width:100%;height:100%">
+							<div class="black-bar handle" style="width:100%;height:30px"></div>
+						</div>
+					</td>
+					<td>
+						<span style="text-align:center">y-align</span>
+					</td>
+				</tr>
+			</tbody>
+        </table>
+        <form id="i_align">Alignment
+			<input id="xalign" type="text" onKeyUp="align_x_input(this.value)" value="0.0"/>
+			<input id="yalign" type="text" onKeyUp="align_y_input(this.value)" value="0.0"/>
+        </form>
+    </body>
+</html>
