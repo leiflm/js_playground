@@ -29,8 +29,8 @@
 	<title>evas test</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="generator" content="Geany 0.21" />
-    <script type="text/javascript" src="evas.js">
-	</script>
+    <script type="text/javascript" src="evas.js"></script>
+    <script type="text/javascript" src="evas_object.js"></script>
     <script type="text/javascript">
 
 		function redraw()
@@ -50,7 +50,7 @@
 <body>
 	<form action="javascript:redraw()" style="left:400px">
 		<textarea id="ec" type="text" style="width:300px;height:300px;text-align:left">
-var e = evas_new();
+var e = evas_new(500, 500);
 var o = evas_object_rectangle_add(e);
 evas_object_show(o, true);
 evas_object_rectangle_color_set(o, "red");

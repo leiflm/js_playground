@@ -4,20 +4,38 @@ var EVAS_OBJECT_BOX = 1;
 var evasses = new Array();
 
 /* functions to create and handle evas */
-function _evas_new()
+function _evas_new(w, h)
 {
 	this.evas_objects = new Array();
 	this.ts = new Date().getTime();
 	this.id = "Evas" + this.ts;
-
-	evasses.push(this);
+	if (!w)
+		var w = 0;
+	if (!h)
+		var h = 0;
+	this.w = w;
+	this.h = h;
 
 	return this;
 }
 
-function evas_new()
+function evas_new(w, h)
 {
-	return new _evas_new();
+	var e = new _evas_new(w, h);
+	console.log("Addinng evas %s", evas_id_get(e));
+	evasses.push(e);
+
+	return e;
+}
+
+function evas_id_get(evas)
+{
+	return evas.id;
+}
+
+function evas_size_get(o)
+{
+	return {w : o.w, h : o.h};
 }
 
 function evas_object_append(evas, evas_object)
@@ -41,28 +59,21 @@ function evas_objects_get(evas)
 	return evas.evas_objects;
 }
 
-function evas_draw_defaults_set(divo, o)
+function evas_draw_defaults_set(ctxt, o)
 {
-	divo.style.position = "absolute";
-	//set style according to attribute values
-	var geo = evas_object_geometry_get(o);
-	divo.style.left = geo.x + "px";
-	divo.style.top = geo.y + "px";
-	divo.style.width = geo.w + "px";
-	divo.style.height = geo.h + "px";
-	//console.log("o geometry: %d %d %d %d", geo.x ,geo.y, geo.w, geo.h);		
+	// Nothing do do here yet
 }
 
 function evas_draw(evas)
 {
 	console.log("evas with %d elements is drawn", evas_objects_get(evas).length);
-	var e = document.createElement('div');
+	var e = document.createElement('canvas');
 	e.setAttribute('id', evas.id);
 	document.body.appendChild(e);
-	e.style.width = "100%";
-	e.style.height = "100%";
-	e.style.position = "absolute";
-	e.style.overflow = "hidden";
+	var es = evas_size_get(evas);
+	e.width = es.w;
+	e.height = es.h;
+	var ctx = e.getContext("2d");
 
 	for (var i = 0; i < evas_objects_get(evas).length; i++)
 	{
@@ -70,16 +81,11 @@ function evas_draw(evas)
 
 		if (!evas_object_visible_get(o))
 			continue;
-
-		//add element to html canvas
-		var divo = document.createElement('div');
-		divo.setAttribute('id', "o" + i);
-		e.appendChild(divo);
-		evas_draw_defaults_set(divo, o);
+		evas_draw_defaults_set(ctx, o);
 		switch (o.type)
 		{
 			case EVAS_OBJECT_RECTANGLE:
-				evas_draw_evas_object_rectangle(divo, o);
+				evas_draw_evas_object_rectangle(ctx, o);
 				break;
 			default:
 				break;
@@ -89,103 +95,31 @@ function evas_draw(evas)
 
 function evas_del(evas)
 {
-	var e = document.getElementById(evas.id);
-	var o;
+	var e = document.getElementById(evas_id_get(evas));
 
 	if (!e) return;
 
-	for (var i = 0; i < e.childNodes.length, o = e.childNodes[i]; i++)
-		e.removeChild(o);
-	
-	evas.evas_objects = null;
+	var p = e.parentNode;
+	p.removeChild(e);
 }
 
-function evasses_del(evas)
+function evasses_del()
 {
-	var e
+	var e;
 
-	for (var i = 0; i < evasses.length, e = evasses[i]; i++)
+	for (var i = (evasses.length - 1); i >= 0, e = evasses[i]; i--)
 	{
+		console.log("deleting evas %s", evas_id_get(e));
 		evas_del(e);
-		evasses.pop(e);
+		evasses.pop();
 	}
 }
 
-function evas_draw_evas_object_rectangle(divo, o)
+function evas_draw_evas_object_rectangle(ctx, o)
 {
-	console.log("called for draw rect, color: %s", evas_object_rectangle_color_get(o));
-	divo.style.backgroundColor = evas_object_rectangle_color_get(o);
-}
-
-/* functions to create evas objects */
-
-function evas_object_add(evas, type)
-{
-	this.evas = evas;
-	this.type = type;
-	this.x = 0;
-	this.y = 0;
-	this.w = 1;
-	this.h = 1;
-	this.visible = false;
-
-	return this;
-}
-
-function evas_object_evas_get(o)
-{
-	return o.evas;
-}
-
-function evas_object_del(o)
-{
-	evas_object_del(evas_object_evas_get(o), o);
-}
-
-function evas_object_visible_get(o)
-{
-	return o.visible;
-}
-
-function evas_object_show(o, v)
-{
-	o.visible = v;
-}
-
-function evas_object_move(o, x, y)
-{
-	o.x = x;
-	o.y = y;
-}
-
-function evas_object_resize(o, w, h)
-{
-	o.w = w;
-	o.h = h;
-}
-
-function evas_object_geometry_get(o)
-{
-	return {x : o.x, y : o.y, w : o.w, h : o.h};
-}
-
-function evas_object_rectangle_add(evas)
-{
-	var o = new evas_object_add(evas, EVAS_OBJECT_RECTANGLE);
-	o.color = "white";
-
-	evas_object_append(evas, o);
-
-	return o;
-}
-
-function evas_object_rectangle_color_set(o, c)
-{
-	o.color = c;
-}
-
-function evas_object_rectangle_color_get(o)
-{
-	console.log("Rectangle color: %s", o.color);
-	return o.color;
+	//set style according to attribute values
+	var geo = evas_object_geometry_get(o);
+	ctx.fillStyle = evas_object_rectangle_color_get(o);
+	ctx.fillRect(geo.x, geo.y, geo.w, geo.h);
+	//console.log("o geometry: %d %d %d %d", geo.x ,geo.y, geo.w, geo.h);
 }
